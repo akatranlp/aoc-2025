@@ -35,6 +35,35 @@ func (*Day02) Part1(r io.Reader) int {
 }
 
 func (*Day02) Part2(r io.Reader) int {
-	fmt.Println("Part2 not implemented")
-	return -1
+	var res int
+	for field := range its.ReaderToIter(r, its.SplitByByte(',')) {
+		field = strings.TrimSpace(field)
+		var l, r int
+		fmt.Sscanf(field, "%d-%d", &l, &r)
+		for num := l; num <= r; num++ {
+			number := strconv.Itoa(num)
+			numLen := len(number)
+
+			for i := 1; i <= numLen/2; i++ {
+				if numLen%i != 0 {
+					continue
+				}
+
+				correct := true
+				for j := range (numLen / i) - 1 {
+					first := number[j*i : (j+1)*i]
+					second := number[(j+1)*i : (j+2)*i]
+					if second != first {
+						correct = false
+						break
+					}
+				}
+				if correct {
+					res += num
+					break
+				}
+			}
+		}
+	}
+	return res
 }
