@@ -3,9 +3,9 @@ package main
 import (
 	"aoc-lib/aoc"
 	"aoc-lib/its"
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 )
 
 type Day03 struct{}
@@ -40,6 +40,27 @@ func (*Day03) Part1(r io.Reader) int {
 }
 
 func (*Day03) Part2(r io.Reader) int {
-	fmt.Println("Part2 not implemented")
-	return -1
+	var res int
+	for row := range its.Filter(its.ReaderToIter(r), its.FilterEmptyLines) {
+		numbers := []byte(row)
+
+		maxIdxs := make([]int, 12)
+		for i := range maxIdxs {
+			if i != 0 {
+				maxIdxs[i] = maxIdxs[i-1] + 1
+			}
+			for j := maxIdxs[i]; j < len(numbers)-(11-i); j++ {
+				if numbers[j] > numbers[maxIdxs[i]] {
+					maxIdxs[i] = j
+				}
+			}
+		}
+		resBytes := make([]byte, 12)
+		for i := range maxIdxs {
+			resBytes[i] = numbers[maxIdxs[i]]
+		}
+		maxNum, _ := strconv.Atoi(string(resBytes))
+		res += maxNum
+	}
+	return res
 }
